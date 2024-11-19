@@ -19,7 +19,7 @@ public interface Atom {
     @NonNull
     AtomSingletonRegistry getSingletonManager();
 
-    static class Instance {
+    class Instance {
         protected static Atom INSTANCE;
 
         protected static synchronized void setInstance(@NonNull Atom atom) {
