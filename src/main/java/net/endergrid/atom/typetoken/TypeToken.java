@@ -5,6 +5,7 @@ import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.CheckReturnValue;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 
 public interface TypeToken<T> extends Type, AnnotatedElement {
@@ -41,6 +42,10 @@ public interface TypeToken<T> extends Type, AnnotatedElement {
         return convert(type, null);
     }
 
+    static <T> TypeToken<T> convert(Class<T> type) {
+        return convert(type, null);
+    }
+
     /**
      * Converts a `Type` and its associated annotations into an `ITypeToken`.
      *
@@ -50,7 +55,11 @@ public interface TypeToken<T> extends Type, AnnotatedElement {
      * @return an `ITypeToken` representing the specified type and annotations
      */
     static <T> TypeToken<T> convert(@NonNull Type type, @Nullable AnnotatedElement annotatedElement) {
-        return TypeTokenFactory.get().create(type,annotatedElement);
+        return TypeTokenFactory.get().create(type, annotatedElement);
+    }
+
+    static <T> TypeToken<T> create(@NonNull Type type, Annotation ...annotations) {
+        return TypeTokenFactory.get().create(type, annotations);
     }
 
     /**
@@ -97,6 +106,8 @@ public interface TypeToken<T> extends Type, AnnotatedElement {
      */
     @CheckReturnValue
     <U> TypeToken<U> withType(Class<U> type);
+
+    String toString(boolean includeAnnotations);
 
     /**
      * A generic type interface that provides a unified view for types with either type parameters or bounds,
