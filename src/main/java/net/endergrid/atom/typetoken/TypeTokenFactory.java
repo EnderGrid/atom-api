@@ -4,6 +4,7 @@ import lombok.NonNull;
 import net.endergrid.atom.Atom;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
 
@@ -18,4 +19,6 @@ public interface TypeTokenFactory {
     }
 
     <T> TypeToken<T> create(@NonNull Type type, @Nullable AnnotatedElement annotatedElement);
+
+    <T> TypeToken<T> create(@NonNull Type type, Annotation[] annotations);
 }

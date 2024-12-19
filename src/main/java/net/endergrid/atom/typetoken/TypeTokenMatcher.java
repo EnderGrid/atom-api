@@ -67,28 +67,39 @@ public interface TypeTokenMatcher<T extends TypeToken<?>> extends Predicate<T> {
      * Creates a matcher that checks if a TypeToken is a superclass of the specified class.
      *
      * @param clazz The class to check against
-     * @param <T> The type of TypeToken
+     * @param <T>   The type of TypeToken
      * @return A matcher for superclass relationship
      */
-    static <T extends TypeToken<?>> TypeTokenMatcher<T> isSuperClass(Class<?> clazz) {
+    static <T> TypeTokenMatcher<TypeToken<? super T>> isSuperClass(Class<? super T> clazz) {
         return typeToken -> typeToken.isSuperClassOfDeclaredType(clazz);
+    }
+
+    static <T> TypeTokenMatcher<TypeToken<? super T>> isAnySuperClass(Class<?>... classes) {
+        return typeToken -> {
+            for (final Class<?> clazz : classes) {
+                if (typeToken.isSuperClassOfDeclaredType(clazz)) {
+                    return true;
+                }
+            }
+            return false;
+        };
     }
 
     /**
      * Creates a matcher for Generic TypeTokens that checks a specific generic parameter.
      *
-     * @param index The index of the generic parameter to check
+     * @param index   The index of the generic parameter to check
      * @param matcher The matcher to apply to the generic parameter
-     * @param <U> The type of TypeToken to match against
+     * @param <U>     The type of TypeToken to match against
      * @return A matcher for generic parameters
      */
     static <U extends TypeToken<?>> TypeTokenMatcher<TypeToken.Generic<?>> genericChildAt(int index, TypeTokenMatcher<U> matcher) {
         return typeToken -> {
-            if (!(typeToken instanceof TypeToken.Generic<?> generic)) {
+            if (!(typeToken instanceof TypeToken.Generic<?>)) {
                 return false;
             }
 
-            final TypeToken<?>[] bounds = generic.getGenerics();
+            final TypeToken<?>[] bounds = typeToken.getGenerics();
             return bounds.length > index && matcher.test((U) bounds[index]);
         };
     }
@@ -100,7 +111,7 @@ public interface TypeTokenMatcher<T extends TypeToken<?>> extends Predicate<T> {
      * @return A matcher combining type check and custom predicate
      */
     static TypeTokenMatcher<TypeToken.Declared<?>> declaredMatching(Predicate<TypeToken.Declared<?>> predicate) {
-        return typeToken -> typeToken instanceof TypeToken.Declared<?> declared && predicate.test(declared);
+        return typeToken -> typeToken instanceof TypeToken.Declared<?> && predicate.test(typeToken);
     }
 
     /**
@@ -110,7 +121,7 @@ public interface TypeTokenMatcher<T extends TypeToken<?>> extends Predicate<T> {
      * @return A matcher combining type check and custom predicate
      */
     static TypeTokenMatcher<TypeToken.Generic<?>> genericMatching(Predicate<TypeToken.Generic<?>> predicate) {
-        return typeToken -> typeToken instanceof TypeToken.Generic<?> generic && predicate.test(generic);
+        return typeToken -> typeToken instanceof TypeToken.Generic<?> && predicate.test(typeToken);
     }
 
     @Override
@@ -129,7 +140,7 @@ public interface TypeTokenMatcher<T extends TypeToken<?>> extends Predicate<T> {
      * Combines this matcher with another using logical AND.
      *
      * @param other The matcher to combine with
-     * @param <U> The type of TypeToken
+     * @param <U>   The type of TypeToken
      * @return A combined matcher
      */
     default <U extends T> TypeTokenMatcher<U> and(TypeTokenMatcher<? super U> other) {
@@ -140,7 +151,7 @@ public interface TypeTokenMatcher<T extends TypeToken<?>> extends Predicate<T> {
      * Combines this matcher with another using logical OR.
      *
      * @param other The matcher to combine with
-     * @param <U> The type of TypeToken
+     * @param <U>   The type of TypeToken
      * @return A combined matcher
      */
     default <U extends T> TypeTokenMatcher<U> or(TypeTokenMatcher<? super U> other) {
