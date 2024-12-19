@@ -11,14 +11,14 @@ import lombok.RequiredArgsConstructor;
  * You can create your own priority levels by implementing the {@link AtomEventPriority} interface.
  */
 public interface AtomEventPriority {
-    public long getPriority();
+    long getPriority();
 
     @RequiredArgsConstructor
     @Getter
-    public enum Default implements AtomEventPriority {
-        FIRST(Long.MIN_VALUE),
+    enum Default implements AtomEventPriority {
+        FIRST(Long.MIN_VALUE + 1),
         NORMAL(Long.MAX_VALUE / 2),
-        LAST(Long.MAX_VALUE);
+        LAST(Long.MAX_VALUE - 1);
 
         private final long priority;
     }

@@ -1,13 +1,13 @@
 package net.endergrid.atom.event.bus;
 
-import net.endergrid.atom.Atom;
-import net.endergrid.atom.event.AtomEventResult;
-import net.endergrid.atom.event.handler.AtomEventHandlerRegistration;
+import io.vertx.core.Future;
 import lombok.NonNull;
+import net.endergrid.atom.event.AtomEventObjectFactory;
+import net.endergrid.atom.event.AtomEventResult;
+import net.endergrid.atom.event.handler.AtomEventRegistration;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.UnaryOperator;
 
@@ -24,7 +24,7 @@ public interface AtomEventRegistrable<EVENT> {
      * @return the result of the event processing
      */
     @Blocking
-    AtomEventResult postSync(EVENT event);
+    AtomEventResult post(EVENT event);
 
     /**
      * Posts an event asynchronously, executing handlers in a separate thread.
@@ -33,7 +33,7 @@ public interface AtomEventRegistrable<EVENT> {
      * @param executor the executor to run the handlers, or null to use the default
      * @return a CompletableFuture representing the result of the event processing
      */
-    CompletableFuture<AtomEventResult> postAsync(EVENT event, @Nullable Executor executor);
+    Future<AtomEventResult> postAsync(EVENT event, @Nullable Executor executor);
 
     /**
      * Registers an event handler with the bus.
@@ -42,7 +42,7 @@ public interface AtomEventRegistrable<EVENT> {
      * @param registration the handler registration
      * @return a registration object for the handler
      */
-    <E extends EVENT> AtomEventHandlerRegistration<E> registerHandler(@NonNull AtomEventHandlerRegistration<E> registration);
+    <E extends EVENT> AtomEventRegistration<E> registerHandler(@NonNull AtomEventRegistration<E> registration);
 
     /**
      * Registers an event handler with the event bus.
@@ -51,7 +51,7 @@ public interface AtomEventRegistrable<EVENT> {
      * @param builder a function that configures the event handler registration
      * @return a registration object for the handler
      */
-    default <E> AtomEventHandlerRegistration<E> registerHandler(@NonNull UnaryOperator<AtomEventHandlerRegistration.Builder<E>> builder) {
-        return this.registerHandler(builder.apply(Atom.get().getObjectFactory().create(AtomEventHandlerRegistration.Builder.class)).build());
+    default <E extends EVENT> AtomEventRegistration<E> registerHandler(@NonNull UnaryOperator<AtomEventRegistration.Builder<E>> builder) {
+        return this.registerHandler(builder.apply(AtomEventObjectFactory.get().createEventHandlerRegistrationBuilder()).build());
     }
 }

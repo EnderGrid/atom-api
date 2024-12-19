@@ -1,8 +1,9 @@
 package net.endergrid.atom.event.handler;
 
-import net.endergrid.atom.event.AtomEventPriority;
 import dev.oop778.bindings.type.Bindable;
 import lombok.NonNull;
+import net.endergrid.atom.event.AtomEventPriority;
+import net.endergrid.atom.event.group.AtomEventGroup;
 import org.jetbrains.annotations.CheckReturnValue;
 
 import java.util.List;
@@ -13,13 +14,15 @@ import java.util.function.Predicate;
  *
  * @param <EVENT> the type of event the handler processes
  */
-public interface AtomEventHandlerRegistration<EVENT> extends Bindable {
+public interface AtomEventRegistration<EVENT> extends Bindable {
     /**
      * Gets the class of the event the handler processes.
      *
      * @return the event class
      */
-    Class<? extends EVENT> getEventClass();
+    Class<EVENT> getEventClass();
+
+    AtomEventGroup<EVENT> getGroup();
 
     /**
      * Gets the priority of the event handler.
@@ -54,7 +57,14 @@ public interface AtomEventHandlerRegistration<EVENT> extends Bindable {
      *
      * @return the creation time in nanoseconds
      */
-    Long getCreationTimeNs();
+    long getCreationTimeNs();
+
+    /**
+     * Checks if the event handler registration is closed.
+     *
+     * @return true if the registration is closed, false otherwise
+     */
+    boolean isRegistrationClosed();
 
     /**
      * Builder interface for creating handler registration parameters.
@@ -69,7 +79,7 @@ public interface AtomEventHandlerRegistration<EVENT> extends Bindable {
          * @return new builder instance
          */
         @CheckReturnValue
-        Builder<EVENT> withEvent(@NonNull Class<? extends EVENT> eventClass);
+        <E extends EVENT> Builder<E> withEvent(@NonNull Class<E> eventClass);
 
         /**
          * Sets the priority for the handler.
@@ -87,16 +97,7 @@ public interface AtomEventHandlerRegistration<EVENT> extends Bindable {
          * @return new builder instance
          */
         @CheckReturnValue
-        Builder<EVENT> withFilter(@NonNull Predicate<? super EVENT> filter);
-
-        /**
-         * Sets an asynchronous event handler for the registration.
-         *
-         * @param handler the asynchronous event handler to be registered
-         * @return new builder instance
-         */
-        @CheckReturnValue
-        Builder<EVENT> withAsyncHandler(@NonNull AtomEventHandler.Async<? super EVENT> handler);
+        Builder<EVENT> withFilter(@NonNull Predicate<EVENT> filter);
 
         /**
          * Sets a synchronous event handler for the registration.
@@ -105,11 +106,11 @@ public interface AtomEventHandlerRegistration<EVENT> extends Bindable {
          * @return new builder instance
          */
         @CheckReturnValue
-        Builder<EVENT> withSyncHandler(@NonNull AtomEventHandler.Sync<? super EVENT> handler);
+        Builder<EVENT> withHandler(@NonNull AtomEventHandler<EVENT> handler);
 
         /**
          * Builds the registration for this handler
          */
-        AtomEventHandlerRegistration<EVENT> build();
+        AtomEventRegistration<EVENT> build();
     }
 }

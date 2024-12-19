@@ -11,5 +11,13 @@ public interface AtomEventBus<EVENT> extends AtomEventRegistrable<EVENT> {
      *
      * @return the event class
      */
-    Class<? super EVENT> getEventClass();
+    Class<EVENT> getEventClass();
+
+    default boolean handlesEvent(Object event) {
+        return this.getEventClass().isInstance(event);
+    }
+
+    default boolean handlesEventClass(Class<?> eventClass) {
+        return this.getEventClass().isAssignableFrom(eventClass);
+    }
 }

@@ -1,18 +1,11 @@
 package net.endergrid.atom.event.handler;
 
-import net.endergrid.atom.event.AtomEventResult;
 import lombok.NonNull;
-
-import java.util.concurrent.CompletableFuture;
+import net.endergrid.atom.event.AtomEventContext;
 
 public interface AtomEventHandler<EVENT> {
-    @FunctionalInterface
-    interface Async<T> extends AtomEventHandler<T> {
-        CompletableFuture<AtomEventResult> handle(@NonNull T event, @NonNull AtomEventResult currentResult);
-    }
+    @NonNull
+    Continuation handle(@NonNull EVENT event, AtomEventContext<EVENT> context);
 
-    @FunctionalInterface
-    interface Sync<T> extends AtomEventHandler<T> {
-        AtomEventResult handle(@NonNull T event, @NonNull AtomEventResult currentResult);
-    }
+    interface Continuation {}
 }

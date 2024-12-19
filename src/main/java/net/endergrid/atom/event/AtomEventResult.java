@@ -10,12 +10,16 @@ package net.endergrid.atom.event;
  * You can create your own implementation of this interface to represent a custom result for an event.
  */
 public interface AtomEventResult {
-    static final AtomEventResult CONTINUE = new AtomEventResult() {};
-    static final AtomEventResult CANCELLED = new Cancelled() {};
+    AtomEventResult CONTINUE = new AtomEventResult() {};
+    AtomEventResult CANCELLED = new Cancelled() {};
 
     default boolean isCancelled() {
         return this instanceof Cancelled;
     }
 
-    static interface Cancelled extends AtomEventResult {}
+    default boolean isContinue() {
+        return this == CONTINUE;
+    }
+
+    interface Cancelled extends AtomEventResult {}
 }
