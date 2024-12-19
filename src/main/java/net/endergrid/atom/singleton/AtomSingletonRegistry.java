@@ -42,6 +42,15 @@ public interface AtomSingletonRegistry {
     void register(@NonNull Object singleton, @Nullable Bindable registrationBindable);
 
     /**
+     * Registers a singleton object with the registry, optionally with a registration bindable.
+     *
+     * @param clazz the class of the singleton object to register
+     * @param singleton the singleton object to register
+     * @param registrationBindable an optional bindable to associate with the registration
+     */
+    void registerFor(@NonNull Class<?> clazz, Object singleton, @Nullable Bindable registrationBindable);
+
+    /**
      * Registers a singleton object with the registry, optionally with a registration bindable and a hierarchy filter.
      *
      * @param singleton the singleton object to register
