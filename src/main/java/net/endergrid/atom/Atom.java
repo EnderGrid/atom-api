@@ -1,10 +1,10 @@
 package net.endergrid.atom;
 
+import net.endergrid.atom.executor.AtomExecutorRegistry;
 import net.endergrid.atom.singleton.AtomSingletonRegistry;
 import lombok.NonNull;
 
 public interface Atom {
-
     static Atom get() {
         if (Instance.INSTANCE == null) {
             throw new IllegalStateException("Atom is not initialized");
@@ -14,10 +14,13 @@ public interface Atom {
     }
 
     @NonNull
+    AtomSingletonRegistry getSingletonManager();
+
+    @NonNull
     AtomObjectFactory getObjectFactory();
 
     @NonNull
-    AtomSingletonRegistry getSingletonManager();
+    AtomExecutorRegistry getExecutorRegistry();
 
     class Instance {
         protected static Atom INSTANCE;
