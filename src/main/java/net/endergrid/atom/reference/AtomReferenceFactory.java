@@ -33,5 +33,5 @@ public interface AtomReferenceFactory<T> {
      *
      * @param value The temporary atom reference to be converted to a permanent one.
      */
-    void upgradeToPermanent(@NonNull AtomReference<? super T> value);
+    void upgradeToPermanent(@NonNull AtomReference<? extends T> value);
 }

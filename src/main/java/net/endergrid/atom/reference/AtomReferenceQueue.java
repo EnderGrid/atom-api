@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 
 public interface AtomReferenceQueue<T> {
 
-    static AtomReferenceQueue<Object> NOOP = new AtomReferenceQueue<Object>() {
+    AtomReferenceQueue<Object> NOOP = new AtomReferenceQueue<Object>() {
         @Override
         public void safeOffer(@NonNull AtomReference<? super Object> reference, AtomReference.@NonNull DisposalReason reason) {}
 

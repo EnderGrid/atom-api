@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 public interface AtomReferenceBuilder<T> {
 
     static <T> AtomReferenceBuilder<T> create() {
-        return Atom.get().getObjectFactory().create(AtomReferenceBuilder.class);
+        return Atom.get().getObjectFactory().createReferenceBuilder();
     }
 
     /**
